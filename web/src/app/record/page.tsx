@@ -50,7 +50,7 @@ export default async function RecordPage({
         ← Back to search
       </Link>
 
-      <h1 className="text-lg font-semibold">{record.title}</h1>
+      <h1 className="font-display text-2xl">{record.title}</h1>
       <div className="text-sm flex flex-wrap gap-3" style={{ color: "var(--text-muted)" }}>
         {record.date && <span>{record.date}</span>}
         {record.doc_type && <span>· {record.doc_type}</span>}
@@ -100,7 +100,7 @@ export default async function RecordPage({
 
         <div className="flex flex-col gap-4">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: "var(--text-muted)" }}>
+            <div className="masthead-caps text-xs mb-1" style={{ color: "var(--text-muted)" }}>
               Text {record.text_source ? `(${record.text_source})` : ""}
             </div>
             <div
@@ -113,7 +113,7 @@ export default async function RecordPage({
 
           {record.tables.length > 0 && (
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: "var(--text-muted)" }}>
+              <div className="masthead-caps text-xs mb-1" style={{ color: "var(--text-muted)" }}>
                 Extracted tables
               </div>
               {record.tables.map((t, i) => (
@@ -139,7 +139,7 @@ export default async function RecordPage({
 
           {Object.keys(entitiesByType).length > 0 && (
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: "var(--text-muted)" }}>
+              <div className="masthead-caps text-xs mb-1" style={{ color: "var(--text-muted)" }}>
                 Entities
               </div>
               {Object.entries(entitiesByType).map(([type, ents]) => (

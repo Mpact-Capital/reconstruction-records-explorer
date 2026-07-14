@@ -67,7 +67,7 @@ export default async function AnalysisPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-lg font-semibold">Analysis</h1>
+      <h1 className="font-display text-2xl">Analysis</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatTile label="Total records" value={docTypes.reduce((s, d) => s + d.count, 0).toLocaleString()} />
@@ -83,7 +83,7 @@ export default async function AnalysisPage() {
       </div>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
+        <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
           Documents by type
         </h2>
         <div className="flex flex-col gap-2">
@@ -101,7 +101,7 @@ export default async function AnalysisPage() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
+        <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
           Volume by decade
         </h2>
         <div className="flex flex-col gap-2">
@@ -113,7 +113,7 @@ export default async function AnalysisPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
+          <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
             Most-mentioned people
           </h2>
           <div className="flex flex-col gap-2">
@@ -131,7 +131,7 @@ export default async function AnalysisPage() {
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
+          <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
             Most-mentioned places
           </h2>
           <div className="flex flex-col gap-2">
@@ -143,7 +143,7 @@ export default async function AnalysisPage() {
       </div>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
+        <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
           Largest dollar figures found (not necessarily personal transactions — see note above)
         </h2>
         <div className="overflow-x-auto">

@@ -31,7 +31,7 @@ export default async function PersonPage({
         ← Back to search
       </Link>
 
-      <h1 className="text-lg font-semibold capitalize">{profile.name}</h1>
+      <h1 className="font-display text-2xl capitalize">{profile.name}</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div className="p-4 rounded border" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
@@ -66,7 +66,7 @@ export default async function PersonPage({
 
       {profile.financial_mentions.length > 0 && (
         <div>
-          <div className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: "var(--text-muted)" }}>
+          <div className="masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
             Financial timeline
           </div>
           <div className="overflow-x-auto">
@@ -101,7 +101,7 @@ export default async function PersonPage({
       )}
 
       <div>
-        <div className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: "var(--text-muted)" }}>
+        <div className="masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
           Records mentioning {profile.name}
         </div>
         <div className="flex flex-col gap-2">

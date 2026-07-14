@@ -31,7 +31,7 @@ export default async function SearchPage({
 
       <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6">
         <aside className="flex flex-col gap-2">
-          <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
+          <div className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
             Document type
           </div>
           <Link

@@ -1,19 +1,32 @@
 @import "tailwindcss";
 
+/*
+  "Reconstruction Ledger" theme -- colors drawn from period document material
+  (aged paper, iron-gall/Prussian ink, sealing wax, brass, ledger green,
+  mourning plum) rather than any Union/Confederate coding. Categorical
+  palette validated with the dataviz skill's validate_palette.js: passes
+  lightness band, chroma floor, CVD separation (worst adjacent ΔE 21.8-29.9),
+  and surface contrast (brass carries a contrast WARN, mitigated by direct
+  labels wherever it's used -- never color-alone).
+*/
 :root {
-  --background: #f9f9f7;
-  --foreground: #0b0b0b;
-  --surface: #fcfcfb;
-  --text-secondary: #52514e;
-  --text-muted: #898781;
-  --gridline: #e1e0d9;
-  --border: rgba(11, 11, 11, 0.1);
-  --series-1: #2a78d6;
-  --series-2: #1baf7a;
-  --series-3: #eda100;
-  --series-4: #008300;
-  --series-5: #4a3aa7;
-  --series-6: #e34948;
+  --background: #f2ead9;
+  --foreground: #241d15;
+  --surface: #faf5e9;
+  --surface-raised: #fffdf8;
+  --text-secondary: #6b5d48;
+  --text-muted: #968a70;
+  --gridline: #ddd2b8;
+  --border: rgba(36, 29, 21, 0.14);
+  --rule: rgba(36, 29, 21, 0.35);
+
+  /* categorical -- fixed order, never cycled */
+  --series-1: #2f74ad; /* ink-blue (Prussian ink) */
+  --series-2: #2e8a52; /* ledger green */
+  --series-3: #b3811a; /* brass/gold */
+  --series-4: #a85c2e; /* rust/terracotta */
+  --series-5: #7a4a84; /* mourning plum */
+  --series-6: #9c3b2e; /* sealing-wax red */
 }
 
 @theme inline {
@@ -21,33 +34,63 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display-serif);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0d0d0d;
-    --foreground: #ffffff;
-    --surface: #1a1a19;
-    --text-secondary: #c3c2b7;
-    --text-muted: #898781;
-    --gridline: #2c2c2a;
-    --border: rgba(255, 255, 255, 0.1);
-    --series-1: #3987e5;
-    --series-2: #199e70;
-    --series-3: #c98500;
-    --series-4: #008300;
-    --series-5: #9085e9;
-    --series-6: #e66767;
+    --background: #1c1712;
+    --foreground: #ede3d0;
+    --surface: #26201a;
+    --surface-raised: #2d251e;
+    --text-secondary: #b8a98d;
+    --text-muted: #8f8270;
+    --gridline: #3a2f24;
+    --border: rgba(237, 227, 208, 0.12);
+    --rule: rgba(237, 227, 208, 0.3);
+
+    --series-1: #4a8fc9;
+    --series-2: #4aa06a;
+    --series-3: #b68526;
+    --series-4: #c67a49;
+    --series-5: #a565b0;
+    --series-6: #c25a49;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  /* faint paper grain -- restrained, not decorative */
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(36, 29, 21, 0.025), transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(36, 29, 21, 0.02), transparent 55%);
+  background-attachment: fixed;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(0, 0, 0, 0.25), transparent 60%),
+      radial-gradient(circle at 80% 70%, rgba(0, 0, 0, 0.2), transparent 55%);
+  }
 }
 
 a {
   color: var(--series-1);
 }
 
+.ledger-rule {
+  border-top: 3px double var(--rule);
+}
+
+.font-display {
+  font-family: var(--font-display-serif), Georgia, "Times New Roman", serif;
+}
+
+.masthead-caps {
+  font-family: var(--font-display-serif), Georgia, serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
