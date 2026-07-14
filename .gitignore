@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.env
+.env.*
+node_modules/
+.next/
+data/raw/
+data/images/
+data/checkpoints/
+*.log
+.DS_Store
+.pytest_cache/
+*.sqlite3
