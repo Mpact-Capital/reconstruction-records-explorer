@@ -104,9 +104,7 @@ export default async function RecordPage({
             <div className="masthead-caps text-xs mb-1" style={{ color: "var(--text-muted)" }}>
               Text {record.text_source ? `(${record.text_source})` : ""}
             </div>
-            <div
-              className="paper-card text-sm whitespace-pre-wrap p-3 rounded max-h-96 overflow-y-auto"
-            >
+            <div className="paper-card text-sm whitespace-pre-wrap p-3 rounded leading-relaxed">
               {record.text || "No text available."}
             </div>
           </div>

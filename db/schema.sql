@@ -32,7 +32,13 @@ CREATE TABLE IF NOT EXISTS records (
     raw JSONB,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     text_tsv tsvector GENERATED ALWAYS AS (
-        to_tsvector('english', coalesce(title, '') || ' ' || coalesce(text, ''))
+        to_tsvector(
+            'english',
+            coalesce(title, '') || ' ' ||
+            coalesce(text, '') || ' ' ||
+            coalesce(caption, '') || ' ' ||
+            coalesce(photo_description, '')
+        )
     ) STORED
 );
 

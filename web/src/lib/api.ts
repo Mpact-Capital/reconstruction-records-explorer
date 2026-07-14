@@ -105,15 +105,33 @@ async function getJSON<T>(path: string): Promise<T> {
 export function search(params: {
   q?: string;
   doc_type?: string;
+  collection?: string;
+  person?: string;
+  place?: string;
+  decade?: string;
   limit?: number;
   offset?: number;
 }): Promise<SearchResponse> {
   const qs = new URLSearchParams();
   if (params.q) qs.set("q", params.q);
   if (params.doc_type) qs.set("doc_type", params.doc_type);
+  if (params.collection) qs.set("collection", params.collection);
+  if (params.person) qs.set("person", params.person);
+  if (params.place) qs.set("place", params.place);
+  if (params.decade) qs.set("decade", params.decade);
   qs.set("limit", String(params.limit ?? 25));
   qs.set("offset", String(params.offset ?? 0));
   return getJSON(`/search?${qs.toString()}`);
+}
+
+export type FacetValue = { value: string | number; count: number };
+
+export function getFacetOptions(field: "person" | "place" | "collection" | "decade"): Promise<{
+  field: string;
+  values: FacetValue[];
+  truncated: boolean;
+}> {
+  return getJSON(`/facets/${field}`);
 }
 
 export function getRecord(id: string): Promise<RecordDetail> {

@@ -45,13 +45,47 @@ def search(
     q: str = "",
     doc_type: Optional[str] = None,
     collection: Optional[str] = None,
+    person: Optional[str] = None,
+    place: Optional[str] = None,
+    decade: Optional[int] = None,
     limit: int = Query(25, le=150),
     offset: int = 0,
 ):
+    person_pattern = f"%{normalize(person)}%" if person else None
+    place_pattern = f"%{normalize(place)}%" if place else None
+
+    params = {
+        "q": q,
+        "doc_type": doc_type,
+        "collection": collection,
+        "person_pattern": person_pattern,
+        "place_pattern": place_pattern,
+        "decade": decade,
+        "limit": limit,
+        "offset": offset,
+    }
+
+    # person/place are joined via EXISTS against entities rather than baked
+    # into text_tsv (a separate table, can't live in a generated column) --
+    # this is also what lets the same filter power the dropdown/datalist
+    # options in /facets without duplicating logic.
+    where_clause = """
+        WHERE (%(q)s = '' OR text_tsv @@ plainto_tsquery('english', %(q)s))
+          AND (%(doc_type)s::text IS NULL OR doc_type = %(doc_type)s)
+          AND (%(collection)s::text IS NULL OR collection ILIKE '%%' || %(collection)s || '%%')
+          AND (%(decade)s::int IS NULL OR (date ~ '\\d{4}' AND (substring(date from '\\d{4}')::int / 10) * 10 = %(decade)s))
+          AND (%(person_pattern)s::text IS NULL OR EXISTS (
+                SELECT 1 FROM entities e WHERE e.record_id = records.id
+                AND e.type = 'person' AND e.normalized_value ILIKE %(person_pattern)s))
+          AND (%(place_pattern)s::text IS NULL OR EXISTS (
+                SELECT 1 FROM entities e WHERE e.record_id = records.id
+                AND e.type = 'place' AND e.normalized_value ILIKE %(place_pattern)s))
+    """
+
     pool = get_pool()
     with pool.connection() as conn, conn.cursor() as cur:
         cur.execute(
-            """
+            f"""
             SELECT id, title, date, doc_type, collection, image_url, local_image_path, rights,
                    CASE WHEN %(q)s = '' THEN left(coalesce(text, ''), 240)
                         ELSE ts_headline('english', coalesce(text, ''), plainto_tsquery('english', %(q)s),
@@ -60,27 +94,67 @@ def search(
                    CASE WHEN %(q)s = '' THEN 0
                         ELSE ts_rank(text_tsv, plainto_tsquery('english', %(q)s)) END AS rank
             FROM records
-            WHERE (%(q)s = '' OR text_tsv @@ plainto_tsquery('english', %(q)s))
-              AND (%(doc_type)s::text IS NULL OR doc_type = %(doc_type)s)
-              AND (%(collection)s::text IS NULL OR collection ILIKE '%%' || %(collection)s || '%%')
+            {where_clause}
             ORDER BY rank DESC, updated_at DESC
             LIMIT %(limit)s OFFSET %(offset)s
             """,
-            {"q": q, "doc_type": doc_type, "collection": collection, "limit": limit, "offset": offset},
+            params,
         )
         results = cur.fetchall()
 
         cur.execute(
-            """
+            f"""
             SELECT doc_type, count(*) AS count FROM records
-            WHERE (%(q)s = '' OR text_tsv @@ plainto_tsquery('english', %(q)s))
+            {where_clause}
             GROUP BY doc_type ORDER BY count DESC
             """,
-            {"q": q},
+            params,
         )
         facets = cur.fetchall()
 
     return {"results": results, "facets": {"doc_type": facets}, "limit": limit, "offset": offset}
+
+
+@app.get("/facets/{field}")
+def facets(field: str, limit: int = Query(3000, le=10000)):
+    """Distinct values (+ counts) for search dropdowns/datalists.
+    field: person | place | collection | decade
+    """
+    pool = get_pool()
+    with pool.connection() as conn, conn.cursor() as cur:
+        if field in ("person", "place"):
+            cur.execute(
+                """
+                SELECT normalized_value AS value, count(*) AS count
+                FROM entities WHERE type = %s
+                GROUP BY normalized_value ORDER BY count DESC, value ASC LIMIT %s
+                """,
+                (field, limit),
+            )
+        elif field == "collection":
+            cur.execute(
+                """
+                SELECT collection AS value, count(*) AS count
+                FROM records WHERE collection IS NOT NULL
+                GROUP BY collection ORDER BY count DESC LIMIT %s
+                """,
+                (limit,),
+            )
+        elif field == "decade":
+            cur.execute(
+                """
+                SELECT (substring(date from '\\d{4}')::int / 10) * 10 AS value, count(*) AS count
+                FROM records WHERE date ~ '\\d{4}'
+                GROUP BY value ORDER BY value LIMIT %s
+                """,
+                (limit,),
+            )
+        else:
+            raise HTTPException(400, "field must be one of: person, place, collection, decade")
+        rows = cur.fetchall()
+
+    truncated = len(rows) >= limit
+    return {"field": field, "values": rows, "truncated": truncated}
 
 
 @app.get("/record/{record_id:path}")
