@@ -7,6 +7,7 @@ Endpoints:
   GET /aggregate        counts by doc_type/decade, top people/places -- for the analysis view
 """
 
+import os
 import re
 from typing import Optional
 
@@ -17,9 +18,14 @@ from api.db import get_pool
 
 app = FastAPI(title="Reconstruction Records Explorer API")
 
+# Comma-separated list, e.g. "http://localhost:3000,https://my-app.vercel.app"
+_allowed_origins = [
+    o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",") if o.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=_allowed_origins,
     allow_methods=["GET"],
     allow_headers=["*"],
 )
@@ -27,6 +33,11 @@ app.add_middleware(
 
 def normalize(value: str) -> str:
     return re.sub(r"\s+", " ", value.strip().lower())
+
+
+@app.get("/")
+def health():
+    return {"status": "ok", "service": "reconstruction-records-explorer-api"}
 
 
 @app.get("/search")
