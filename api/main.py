@@ -134,9 +134,11 @@ def facets(field: str, limit: int = Query(3000, le=10000)):
         elif field == "collection":
             cur.execute(
                 """
-                SELECT collection AS value, count(*) AS count
+                SELECT collection_group AS "group", collection AS value, count(*) AS count
                 FROM records WHERE collection IS NOT NULL
-                GROUP BY collection ORDER BY count DESC LIMIT %s
+                GROUP BY collection_group, collection
+                ORDER BY collection_group ASC, count DESC, value ASC
+                LIMIT %s
                 """,
                 (limit,),
             )

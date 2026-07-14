@@ -114,10 +114,21 @@ export default async function SearchPage({
               style={{ borderColor: "var(--border)", background: "var(--surface-raised)" }}
             >
               <option value="">Any collection</option>
-              {collectionsFacet.values.map((v) => (
-                <option key={v.value} value={String(v.value)} title={String(v.value)}>
-                  {String(v.value).length > 60 ? String(v.value).slice(0, 60) + "…" : v.value} ({v.count})
-                </option>
+              {Array.from(
+                collectionsFacet.values.reduce((groups, v) => {
+                  const g = v.group ?? "Other";
+                  if (!groups.has(g)) groups.set(g, []);
+                  groups.get(g)!.push(v);
+                  return groups;
+                }, new Map<string, typeof collectionsFacet.values>())
+              ).map(([group, values]) => (
+                <optgroup key={group} label={group}>
+                  {values.map((v) => (
+                    <option key={v.value} value={String(v.value)} title={String(v.value)}>
+                      {String(v.value).length > 55 ? String(v.value).slice(0, 55) + "…" : v.value} ({v.count})
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </div>

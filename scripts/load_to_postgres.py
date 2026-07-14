@@ -18,6 +18,7 @@ import psycopg
 from dotenv import load_dotenv
 
 from harvesters.base import RAW_ROOT
+from harvesters.collections import classify as classify_collection
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -35,22 +36,26 @@ def load_record(conn, record: dict):
     image_urls = record.get("image_urls") or []
     local_paths = record.get("local_image_paths") or []
 
+    raw = record.get("raw") or {}
+    collection_group, collection_detail = classify_collection(raw.get("partof"))
+
     with conn.cursor() as cur:
         cur.execute(
             """
             INSERT INTO records (
-                id, source, title, date, collection, record_group, text, text_source,
+                id, source, title, date, collection, collection_group, record_group, text, text_source,
                 rights, source_url, ingested_at, image_url, local_image_path,
                 doc_type, caption, layout, photo_description, analysis_confidence,
                 mismatch_flags, raw, updated_at
             ) VALUES (
-                %(id)s, %(source)s, %(title)s, %(date)s, %(collection)s, %(record_group)s,
+                %(id)s, %(source)s, %(title)s, %(date)s, %(collection)s, %(collection_group)s, %(record_group)s,
                 %(text)s, %(text_source)s, %(rights)s, %(source_url)s, %(ingested_at)s,
                 %(image_url)s, %(local_image_path)s, %(doc_type)s, %(caption)s, %(layout)s,
                 %(photo_description)s, %(analysis_confidence)s, %(mismatch_flags)s, %(raw)s, now()
             )
             ON CONFLICT (id) DO UPDATE SET
                 title = EXCLUDED.title, date = EXCLUDED.date, collection = EXCLUDED.collection,
+                collection_group = EXCLUDED.collection_group,
                 record_group = EXCLUDED.record_group, text = EXCLUDED.text,
                 text_source = EXCLUDED.text_source, rights = EXCLUDED.rights,
                 source_url = EXCLUDED.source_url, ingested_at = EXCLUDED.ingested_at,
@@ -65,7 +70,8 @@ def load_record(conn, record: dict):
                 "source": record["source"],
                 "title": record.get("title"),
                 "date": record.get("date"),
-                "collection": record.get("collection"),
+                "collection": collection_detail,
+                "collection_group": collection_group,
                 "record_group": record.get("record_group"),
                 "text": record.get("text"),
                 "text_source": record.get("text_source"),

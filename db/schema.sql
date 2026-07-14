@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS records (
     title TEXT,
     date TEXT,
     collection TEXT,
+    collection_group TEXT,
     record_group TEXT,
     text TEXT,
     text_source TEXT,
@@ -44,6 +45,7 @@ CREATE TABLE IF NOT EXISTS records (
 
 CREATE INDEX IF NOT EXISTS idx_records_text_tsv ON records USING GIN (text_tsv);
 CREATE INDEX IF NOT EXISTS idx_records_doc_type ON records (doc_type);
+CREATE INDEX IF NOT EXISTS idx_records_collection_group ON records (collection_group);
 CREATE INDEX IF NOT EXISTS idx_records_source ON records (source);
 CREATE INDEX IF NOT EXISTS idx_records_date ON records (date);
 

@@ -54,7 +54,14 @@ export default async function RecordPage({
       <div className="text-sm flex flex-wrap gap-3" style={{ color: "var(--text-muted)" }}>
         {record.date && <span>{record.date}</span>}
         {record.doc_type && <span>· {record.doc_type}</span>}
-        {record.collection && <span>· {record.collection}</span>}
+        {record.collection && (
+          <span>
+            · {record.collection_group}
+            {record.collection_group && record.collection && record.collection_group !== record.collection && (
+              <>: {record.collection}</>
+            )}
+          </span>
+        )}
       </div>
 
       {record.mismatch_flags.length > 0 && (

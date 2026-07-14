@@ -35,6 +35,7 @@ export type RecordDetail = {
   title: string | null;
   date: string | null;
   collection: string | null;
+  collection_group: string | null;
   record_group: string | null;
   text: string | null;
   text_source: string | null;
@@ -124,7 +125,7 @@ export function search(params: {
   return getJSON(`/search?${qs.toString()}`);
 }
 
-export type FacetValue = { value: string | number; count: number };
+export type FacetValue = { value: string | number; count: number; group?: string };
 
 export function getFacetOptions(field: "person" | "place" | "collection" | "decade"): Promise<{
   field: string;
