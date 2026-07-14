@@ -11,14 +11,15 @@
 */
 :root {
   --background: #f2ead9;
-  --foreground: #241d15;
+  --foreground: #221b12;
   --surface: #faf5e9;
   --surface-raised: #fffdf8;
   --text-secondary: #6b5d48;
   --text-muted: #968a70;
   --gridline: #ddd2b8;
-  --border: rgba(36, 29, 21, 0.14);
-  --rule: rgba(36, 29, 21, 0.35);
+  --border: rgba(34, 27, 18, 0.16);
+  --rule: rgba(34, 27, 18, 0.4);
+  --foxing: rgba(140, 100, 50, 0.16);
 
   /* categorical -- fixed order, never cycled */
   --series-1: #2f74ad; /* ink-blue (Prussian ink) */
@@ -27,6 +28,14 @@
   --series-4: #a85c2e; /* rust/terracotta */
   --series-5: #7a4a84; /* mourning plum */
   --series-6: #9c3b2e; /* sealing-wax red */
+
+  /* wax seal -- a single relief die, not a chart series; not run through
+     the categorical validator (decorative, scope note in color-formula.md) */
+  --seal-base: #8a231c;
+  --seal-highlight: #c85a3e;
+  --seal-shadow: #4a120e;
+  --seal-emblem: #2c0a08;
+  --seal-emblem-highlight: #d98a6a;
 }
 
 @theme inline {
@@ -46,8 +55,9 @@
     --text-secondary: #b8a98d;
     --text-muted: #8f8270;
     --gridline: #3a2f24;
-    --border: rgba(237, 227, 208, 0.12);
-    --rule: rgba(237, 227, 208, 0.3);
+    --border: rgba(237, 227, 208, 0.14);
+    --rule: rgba(237, 227, 208, 0.35);
+    --foxing: rgba(90, 60, 30, 0.22);
 
     --series-1: #4a8fc9;
     --series-2: #4aa06a;
@@ -55,25 +65,60 @@
     --series-4: #c67a49;
     --series-5: #a565b0;
     --series-6: #c25a49;
+
+    --seal-base: #6e1c16;
+    --seal-highlight: #9c3f2c;
+    --seal-shadow: #300d0a;
+    --seal-emblem: #1a0504;
+    --seal-emblem-highlight: #b8654a;
   }
+}
+
+html {
+  background: var(--background);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  /* faint paper grain -- restrained, not decorative */
+  position: relative;
+  min-height: 100%;
+}
+
+/* Aged paper: fine grain (SVG turbulence, tiled), a soft vignette toward
+   the edges, and a scatter of foxing blotches -- the small rust-colored
+   age spots that appear on real 19th-century paper. Fixed + behind
+   everything, restrained opacity so it reads as texture, not decoration. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image:
-    radial-gradient(circle at 20% 10%, rgba(36, 29, 21, 0.025), transparent 60%),
-    radial-gradient(circle at 80% 70%, rgba(36, 29, 21, 0.02), transparent 55%);
-  background-attachment: fixed;
+    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.05) 100%),
+    radial-gradient(circle at 12% 18%, var(--foxing), transparent 7%),
+    radial-gradient(circle at 78% 12%, var(--foxing), transparent 6%),
+    radial-gradient(circle at 92% 62%, var(--foxing), transparent 8%),
+    radial-gradient(circle at 30% 82%, var(--foxing), transparent 7%),
+    radial-gradient(circle at 60% 45%, var(--foxing), transparent 5%),
+    radial-gradient(circle at 8% 70%, var(--foxing), transparent 6%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/></svg>");
+  background-size: cover, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 180px 180px;
 }
 
 @media (prefers-color-scheme: dark) {
-  body {
+  body::before {
     background-image:
-      radial-gradient(circle at 20% 10%, rgba(0, 0, 0, 0.25), transparent 60%),
-      radial-gradient(circle at 80% 70%, rgba(0, 0, 0, 0.2), transparent 55%);
+      radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.35) 100%),
+      radial-gradient(circle at 12% 18%, var(--foxing), transparent 7%),
+      radial-gradient(circle at 78% 12%, var(--foxing), transparent 6%),
+      radial-gradient(circle at 92% 62%, var(--foxing), transparent 8%),
+      radial-gradient(circle at 30% 82%, var(--foxing), transparent 7%),
+      radial-gradient(circle at 60% 45%, var(--foxing), transparent 5%),
+      radial-gradient(circle at 8% 70%, var(--foxing), transparent 6%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/></svg>");
   }
 }
 
@@ -93,4 +138,22 @@ a {
   font-family: var(--font-display-serif), Georgia, serif;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* Documents/cards read as mounted paper: warm hairline, faint lift, and a
+   whisper of the same grain so a card doesn't look pasted onto the page. */
+.paper-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 1px 2px rgba(34, 27, 18, 0.06),
+    0 0 0 1px rgba(34, 27, 18, 0.02) inset;
+}
+
+@media (prefers-color-scheme: dark) {
+  .paper-card {
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(0, 0, 0, 0.15) inset;
+  }
 }

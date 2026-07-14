@@ -17,8 +17,7 @@ export default async function SearchPage({
           name="q"
           defaultValue={q}
           placeholder="Search records (e.g. Freedmen's Hospital, Thaddeus Stevens...)"
-          className="flex-1 min-w-[280px] border rounded px-3 py-2 text-sm"
-          style={{ borderColor: "var(--border)", background: "var(--surface)" }}
+          className="paper-card flex-1 min-w-[280px] rounded px-3 py-2 text-sm"
         />
         <button
           type="submit"
@@ -64,8 +63,7 @@ export default async function SearchPage({
             <Link
               key={r.id}
               href={{ pathname: "/record", query: { id: r.id } }}
-              className="flex gap-4 p-3 rounded border hover:shadow-sm transition-shadow"
-              style={{ borderColor: "var(--border)", background: "var(--surface)" }}
+              className="paper-card flex gap-4 p-3 rounded hover:shadow-md transition-shadow"
             >
               {r.image_url ? (
                 // eslint-disable-next-line @next/next/no-img-element

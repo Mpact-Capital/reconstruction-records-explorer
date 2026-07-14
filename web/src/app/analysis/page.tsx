@@ -39,7 +39,7 @@ function BarRow({
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="p-4 rounded border" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
+    <div className="paper-card p-4 rounded">
       <div className="text-xs" style={{ color: "var(--text-muted)" }}>
         {label}
       </div>

@@ -34,7 +34,7 @@ export default async function PersonPage({
       <h1 className="font-display text-2xl capitalize">{profile.name}</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <div className="p-4 rounded border" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
+        <div className="paper-card p-4 rounded">
           <div className="text-xs" style={{ color: "var(--text-muted)" }}>
             Records mentioning this person
           </div>
@@ -42,7 +42,7 @@ export default async function PersonPage({
             {profile.records.length}
           </div>
         </div>
-        <div className="p-4 rounded border" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
+        <div className="paper-card p-4 rounded">
           <div className="text-xs" style={{ color: "var(--text-muted)" }}>
             Dollar amounts tied to them
           </div>
@@ -50,7 +50,7 @@ export default async function PersonPage({
             ${profile.total_usd.toLocaleString()}
           </div>
         </div>
-        <div className="p-4 rounded border" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
+        <div className="paper-card p-4 rounded">
           <div className="text-xs" style={{ color: "var(--text-muted)" }}>
             Financial mentions
           </div>
@@ -109,8 +109,7 @@ export default async function PersonPage({
             <Link
               key={r.id}
               href={{ pathname: "/record", query: { id: r.id } }}
-              className="flex gap-3 p-2 rounded border"
-              style={{ borderColor: "var(--border)", background: "var(--surface)" }}
+              className="paper-card flex gap-3 p-2 rounded hover:shadow-md transition-shadow"
             >
               {r.image_url && (
                 // eslint-disable-next-line @next/next/no-img-element

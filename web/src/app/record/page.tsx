@@ -74,13 +74,14 @@ export default async function RecordPage({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
           {record.image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={record.image_url.split("#")[0]}
-              alt={record.caption ?? record.title ?? ""}
-              className="w-full rounded border"
-              style={{ borderColor: "var(--border)" }}
-            />
+            <div className="paper-card p-2 rounded">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={record.image_url.split("#")[0]}
+                alt={record.caption ?? record.title ?? ""}
+                className="w-full rounded-sm"
+              />
+            </div>
           ) : (
             <div className="text-sm" style={{ color: "var(--text-muted)" }}>
               No image available for this record.
@@ -104,8 +105,7 @@ export default async function RecordPage({
               Text {record.text_source ? `(${record.text_source})` : ""}
             </div>
             <div
-              className="text-sm whitespace-pre-wrap p-3 rounded border max-h-96 overflow-y-auto"
-              style={{ borderColor: "var(--border)", background: "var(--surface)" }}
+              className="paper-card text-sm whitespace-pre-wrap p-3 rounded max-h-96 overflow-y-auto"
             >
               {record.text || "No text available."}
             </div>
