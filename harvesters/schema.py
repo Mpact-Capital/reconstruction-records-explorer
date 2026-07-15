@@ -65,6 +65,12 @@ class ImageAnalysis(BaseModel):
     entities: list[Entity] = Field(default_factory=list)
     confidence: Optional[float] = None
     mismatch_flags: list[str] = Field(default_factory=list)
+    # True when the image is a scanning artifact (blank target frame, camera
+    # slate, publication title/seal page, or shared descriptive-pamphlet
+    # front matter) rather than actual archival record content -- common in
+    # NARA microfilm, where every roll repeats the same front matter before
+    # the roll's own content begins.
+    is_front_matter: bool = False
 
 
 class UnifiedRecord(BaseModel):

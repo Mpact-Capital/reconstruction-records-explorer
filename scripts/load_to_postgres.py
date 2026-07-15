@@ -18,7 +18,8 @@ import psycopg
 from dotenv import load_dotenv
 
 from harvesters.base import RAW_ROOT
-from harvesters.collections import classify as classify_collection
+from harvesters.collections import classify as classify_loc_collection
+from harvesters.nara import classify_collection as classify_nara_collection
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -37,7 +38,10 @@ def load_record(conn, record: dict):
     local_paths = record.get("local_image_paths") or []
 
     raw = record.get("raw") or {}
-    collection_group, collection_detail = classify_collection(raw.get("partof"))
+    if record.get("source") == "nara":
+        collection_group, collection_detail = classify_nara_collection(record.get("title"), record.get("collection"))
+    else:
+        collection_group, collection_detail = classify_loc_collection(raw.get("partof"))
 
     with conn.cursor() as cur:
         cur.execute(

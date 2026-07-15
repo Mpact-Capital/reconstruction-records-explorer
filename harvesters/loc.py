@@ -89,7 +89,17 @@ async def harvest_loc(
                 if not record.id:
                     continue
 
-                if with_images and record.image_urls and not store.exists(record.id):
+                # A record already on disk may carry a downloaded image and/or
+                # Phase 3 analysis from an earlier harvest (overlapping
+                # queries can re-match the same id). Leave it untouched
+                # rather than re-saving a blank reconstruction over it.
+                existing = store.load(record.id)
+                if existing is not None:
+                    yielded += 1
+                    yield existing
+                    continue
+
+                if with_images and record.image_urls:
                     # store the single largest-resolution image (last in the list)
                     largest_url = record.image_urls[-1].split("#", 1)[0]
                     try:

@@ -13,11 +13,13 @@ import json
 import logging
 import os
 import sys
+from pathlib import Path
 
 import anthropic
+import httpx
 from dotenv import load_dotenv
 
-from analysis.vision import AnalysisCost, analyze_record
+from analysis.vision import AnalysisCost, analyze_record, analyze_record_skip_front_matter
 from harvesters.base import RAW_ROOT
 from harvesters.schema import UnifiedRecord
 
@@ -26,7 +28,14 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 logger = logging.getLogger("analyze")
 
 
-async def worker(queue: asyncio.Queue, client: anthropic.AsyncAnthropic, cost: AnalysisCost, stats: dict):
+async def worker(
+    queue: asyncio.Queue,
+    client: anthropic.AsyncAnthropic,
+    cost: AnalysisCost,
+    stats: dict,
+    source: str,
+    nara_http: "httpx.AsyncClient | None" = None,
+):
     while True:
         item = await queue.get()
         if item is None:
@@ -34,18 +43,36 @@ async def worker(queue: asyncio.Queue, client: anthropic.AsyncAnthropic, cost: A
             break
         path, record = item
         try:
-            record = await analyze_record(client, record, cost=cost)
+            if source == "nara":
+                async def fetch_page(url: str) -> bytes:
+                    resp = await nara_http.get(url)
+                    resp.raise_for_status()
+                    return resp.content
+
+                record, winning_bytes, winning_idx = await analyze_record_skip_front_matter(
+                    client, record, fetch_page, cost=cost
+                )
+                if winning_bytes is not None and record.local_image_paths:
+                    # Replace the harvest-time page with the one that turned
+                    # out to be real content, so the dashboard shows it too.
+                    img_path = Path(record.local_image_paths[0])
+                    img_path.write_bytes(winning_bytes)
+            else:
+                record = await analyze_record(client, record, cost=cost)
+
             with open(path, "w", encoding="utf-8") as f:
                 f.write(record.model_dump_json(indent=2, exclude_none=False))
             stats["done"] += 1
             conf = record.image_analysis.confidence if record.image_analysis else None
+            front_matter = record.image_analysis.is_front_matter if record.image_analysis else None
             logger.info(
-                "[%d/%d] %s | doc_type=%s conf=%s | %s",
+                "[%d/%d] %s | doc_type=%s conf=%s front_matter=%s | %s",
                 stats["done"],
                 stats["total"],
                 record.id,
                 record.image_analysis.doc_type if record.image_analysis else None,
                 conf,
+                front_matter,
                 cost,
             )
             if record.image_analysis and record.image_analysis.mismatch_flags:
@@ -101,16 +128,29 @@ async def run(source: str, max_records: int, concurrency: int, force: bool = Fal
     cost = AnalysisCost()
     stats = {"done": 0, "errors": 0, "total": len(to_process), "mismatches": []}
 
+    nara_http = None
+    if source == "nara":
+        nara_api_key = os.getenv("NARA_API_KEY")
+        if not nara_api_key:
+            raise SystemExit("NARA_API_KEY not set in .env")
+        nara_http = httpx.AsyncClient(headers={"x-api-key": nara_api_key}, timeout=30.0)
+
     queue: asyncio.Queue = asyncio.Queue()
     for item in to_process:
         queue.put_nowait(item)
     for _ in range(concurrency):
         queue.put_nowait(None)
 
-    workers = [asyncio.create_task(worker(queue, client, cost, stats)) for _ in range(concurrency)]
-    await queue.join()
-    for w in workers:
-        w.cancel()
+    try:
+        workers = [
+            asyncio.create_task(worker(queue, client, cost, stats, source, nara_http)) for _ in range(concurrency)
+        ]
+        await queue.join()
+        for w in workers:
+            w.cancel()
+    finally:
+        if nara_http is not None:
+            await nara_http.aclose()
 
     logger.info("Done. %d analyzed, %d errors. Cost: %s", stats["done"], stats["errors"], cost)
     if stats["mismatches"]:

@@ -67,6 +67,12 @@ class RawStore:
     def exists(self, record_id: str) -> bool:
         return (self.record_dir(record_id) / "record.json").exists()
 
+    def load(self, record_id: str) -> UnifiedRecord | None:
+        path = self.record_dir(record_id) / "record.json"
+        if not path.exists():
+            return None
+        return UnifiedRecord.model_validate_json(path.read_text(encoding="utf-8"))
+
     def save_record(self, record: UnifiedRecord) -> Path:
         d = self.record_dir(record.id)
         path = d / "record.json"

@@ -51,6 +51,13 @@ Rules:
 - `mismatch_flags`: note anything where the image content seems to \
   contradict, or not match, the supplied catalog title/date/description \
   (e.g. wrong item, blank/illegible page, mismatched date).
+- `is_front_matter`: true if this image is a scanning/publication artifact \
+  rather than actual record content -- a blank target frame, a camera/lab \
+  slate (operator name, date filmed, roll number), a publication title or \
+  seal page, or pages of a shared descriptive pamphlet/introduction/finding \
+  aid. False for any page that is part of the actual historical record \
+  (a letter, ledger entry, register, contract, photograph, etc.), even if \
+  otherwise hard to read.
 - `entities`: extract every named person, place, date, and organization \
   visible on the page as separate structured entities.
 - `amount` entities are ONLY for concrete, real US-dollar figures actually \
@@ -111,8 +118,9 @@ RECORD_ANALYSIS_TOOL = {
             "text_source_used": {"type": "string", "enum": ["ocr", "htr", "none"]},
             "confidence": {"type": "number", "minimum": 0, "maximum": 1},
             "mismatch_flags": {"type": "array", "items": {"type": "string"}},
+            "is_front_matter": {"type": "boolean", "description": "True if this is a scanning artifact / cover slide / shared front matter, not actual record content."},
         },
-        "required": ["caption", "doc_type", "entities", "transcription", "text_source_used", "confidence", "mismatch_flags"],
+        "required": ["caption", "doc_type", "entities", "transcription", "text_source_used", "confidence", "mismatch_flags", "is_front_matter"],
     },
 }
 
@@ -198,26 +206,7 @@ async def _call_model(client: anthropic.AsyncAnthropic, image_bytes: bytes, medi
 HANDWRITTEN_DOC_TYPES = {"ledger", "register", "letter"}
 
 
-async def analyze_record(
-    client: anthropic.AsyncAnthropic, record: UnifiedRecord, cost: Optional[AnalysisCost] = None
-) -> UnifiedRecord:
-    if not record.local_image_paths:
-        return record
-
-    image_path = Path(record.local_image_paths[0])
-    image_bytes = image_path.read_bytes()
-    media_type = _sniff_media_type(image_bytes)
-
-    resp = await _call_model(client, image_bytes, media_type, record)
-    if cost is not None:
-        cost.add(resp.usage)
-
-    tool_use = next((b for b in resp.content if b.type == "tool_use"), None)
-    if tool_use is None:
-        logger.warning("No tool_use block for record %s", record.id)
-        return record
-
-    data = tool_use.input
+def _apply_analysis(record: UnifiedRecord, data: dict) -> UnifiedRecord:
     tables = [Table(caption=t.get("caption"), rows=t.get("rows", [])) for t in data.get("tables", [])]
     entities = []
     for e in data.get("entities", []):
@@ -242,6 +231,7 @@ async def analyze_record(
         entities=entities,
         confidence=data.get("confidence"),
         mismatch_flags=data.get("mismatch_flags", []),
+        is_front_matter=data.get("is_front_matter", False),
     )
 
     transcription = (data.get("transcription") or "").strip()
@@ -259,3 +249,84 @@ async def analyze_record(
             record.text_source = TextSource.OCR
 
     return record
+
+
+async def analyze_record(
+    client: anthropic.AsyncAnthropic, record: UnifiedRecord, cost: Optional[AnalysisCost] = None
+) -> UnifiedRecord:
+    if not record.local_image_paths:
+        return record
+
+    image_path = Path(record.local_image_paths[0])
+    image_bytes = image_path.read_bytes()
+    media_type = _sniff_media_type(image_bytes)
+
+    resp = await _call_model(client, image_bytes, media_type, record)
+    if cost is not None:
+        cost.add(resp.usage)
+
+    tool_use = next((b for b in resp.content if b.type == "tool_use"), None)
+    if tool_use is None:
+        logger.warning("No tool_use block for record %s", record.id)
+        return record
+
+    return _apply_analysis(record, tool_use.input)
+
+
+async def analyze_record_skip_front_matter(
+    client: anthropic.AsyncAnthropic,
+    record: UnifiedRecord,
+    fetch_page,
+    candidate_offsets: Optional[list] = None,
+    cost: Optional[AnalysisCost] = None,
+) -> tuple[UnifiedRecord, Optional[bytes], Optional[int]]:
+    """For sources (NARA microfilm) where the first page(s) of a record are
+    reliably a shared cover/title/finding-aid front matter rather than actual
+    content: try candidate pages at increasing offsets into record.image_urls,
+    accepting the first one Claude doesn't flag as front matter. `fetch_page`
+    is an async `(url) -> bytes` downloader (caller supplies this so this
+    module doesn't need its own rate-limited HTTP client).
+
+    Returns (record, winning_image_bytes, winning_offset) -- the caller
+    decides whether/where to persist the winning page's bytes, since only it
+    knows the on-disk layout.
+    """
+    if candidate_offsets is None:
+        candidate_offsets = [1, 30, 75, 150]
+
+    urls = record.image_urls
+    if not urls:
+        return record, None, None
+
+    last_data = None
+    last_bytes = None
+    last_idx = None
+    for offset in candidate_offsets:
+        idx = min(offset, len(urls) - 1)
+        url = urls[idx]
+        image_bytes = await fetch_page(url)
+        media_type = _sniff_media_type(image_bytes)
+
+        resp = await _call_model(client, image_bytes, media_type, record)
+        if cost is not None:
+            cost.add(resp.usage)
+
+        tool_use = next((b for b in resp.content if b.type == "tool_use"), None)
+        if tool_use is None:
+            logger.warning("No tool_use block for record %s at offset %d", record.id, idx)
+            continue
+
+        data = tool_use.input
+        last_data, last_bytes, last_idx = data, image_bytes, idx
+        if not data.get("is_front_matter"):
+            logger.info("Record %s: real content found at page offset %d", record.id, idx)
+            break
+        logger.info("Record %s: page offset %d is front matter, trying next", record.id, idx)
+    else:
+        logger.warning("Record %s: all %d candidate pages were front matter, keeping the last", record.id, len(candidate_offsets))
+
+    if last_data is None:
+        return record, None, None
+
+    record = _apply_analysis(record, last_data)
+    return record, last_bytes, last_idx
