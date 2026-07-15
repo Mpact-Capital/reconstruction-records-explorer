@@ -57,8 +57,12 @@ async def worker(
                     # out to be real content, so the dashboard shows it too.
                     img_path = Path(record.local_image_paths[0])
                     img_path.write_bytes(winning_bytes)
+                if winning_idx is not None and winning_idx < len(record.image_urls):
+                    record.thumbnail_url = record.image_urls[winning_idx]
             else:
                 record = await analyze_record(client, record, cost=cost)
+                if record.image_urls:
+                    record.thumbnail_url = record.image_urls[-1]
 
             with open(path, "w", encoding="utf-8") as f:
                 f.write(record.model_dump_json(indent=2, exclude_none=False))

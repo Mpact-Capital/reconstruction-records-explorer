@@ -86,6 +86,21 @@ class UnifiedRecord(BaseModel):
     image_urls: list[str] = Field(default_factory=list)
     local_image_paths: list[str] = Field(default_factory=list)
 
+    # The specific page actually analyzed/captioned (for LoC, its one image;
+    # for NARA, the page analyze_record_skip_front_matter landed on) --
+    # distinct from image_urls, which for NARA holds every page in the
+    # volume after download_full_pages.py runs. Search-result thumbnails and
+    # the record view's main image use this, not image_urls[-1].
+    thumbnail_url: Optional[str] = None
+
+    # For multi-page volumes (NARA microfilm): the full page count and
+    # whether every page has been downloaded to disk yet. Pages are stored
+    # as data/raw/<source>/<id>/pages/NNNN.jpg (a naming convention, not
+    # individually listed here -- a 1500-page volume would otherwise bloat
+    # this record's JSON with 1500 path strings for no benefit).
+    total_pages: Optional[int] = None
+    pages_downloaded: int = 0
+
     text: Optional[str] = None
     text_source: Optional[TextSource] = None
     bounding_boxes: list[BoundingBox] = Field(default_factory=list)

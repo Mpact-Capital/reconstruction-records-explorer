@@ -43,6 +43,9 @@ export type RecordDetail = {
   source_url: string | null;
   image_url: string | null;
   local_image_path: string | null;
+  total_pages: number | null;
+  pages_downloaded: number;
+  page_urls: string[] | null;
   doc_type: string | null;
   caption: string | null;
   layout: string | null;

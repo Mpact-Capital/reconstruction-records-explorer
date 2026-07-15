@@ -49,12 +49,14 @@ def load_record(conn, record: dict):
             INSERT INTO records (
                 id, source, title, date, collection, collection_group, record_group, text, text_source,
                 rights, source_url, ingested_at, image_url, local_image_path,
+                total_pages, pages_downloaded, page_urls,
                 doc_type, caption, layout, photo_description, analysis_confidence,
                 mismatch_flags, raw, updated_at
             ) VALUES (
                 %(id)s, %(source)s, %(title)s, %(date)s, %(collection)s, %(collection_group)s, %(record_group)s,
                 %(text)s, %(text_source)s, %(rights)s, %(source_url)s, %(ingested_at)s,
-                %(image_url)s, %(local_image_path)s, %(doc_type)s, %(caption)s, %(layout)s,
+                %(image_url)s, %(local_image_path)s, %(total_pages)s, %(pages_downloaded)s, %(page_urls)s,
+                %(doc_type)s, %(caption)s, %(layout)s,
                 %(photo_description)s, %(analysis_confidence)s, %(mismatch_flags)s, %(raw)s, now()
             )
             ON CONFLICT (id) DO UPDATE SET
@@ -64,6 +66,8 @@ def load_record(conn, record: dict):
                 text_source = EXCLUDED.text_source, rights = EXCLUDED.rights,
                 source_url = EXCLUDED.source_url, ingested_at = EXCLUDED.ingested_at,
                 image_url = EXCLUDED.image_url, local_image_path = EXCLUDED.local_image_path,
+                total_pages = EXCLUDED.total_pages, pages_downloaded = EXCLUDED.pages_downloaded,
+                page_urls = EXCLUDED.page_urls,
                 doc_type = EXCLUDED.doc_type, caption = EXCLUDED.caption, layout = EXCLUDED.layout,
                 photo_description = EXCLUDED.photo_description,
                 analysis_confidence = EXCLUDED.analysis_confidence,
@@ -82,8 +86,11 @@ def load_record(conn, record: dict):
                 "rights": record.get("rights"),
                 "source_url": record.get("source_url"),
                 "ingested_at": record.get("ingested_at"),
-                "image_url": image_urls[-1] if image_urls else None,
+                "image_url": record.get("thumbnail_url") or (image_urls[-1] if image_urls else None),
                 "local_image_path": local_paths[0] if local_paths else None,
+                "total_pages": record.get("total_pages"),
+                "pages_downloaded": record.get("pages_downloaded", 0),
+                "page_urls": json.dumps(image_urls) if record.get("total_pages") else None,
                 "doc_type": ia.get("doc_type"),
                 "caption": ia.get("caption"),
                 "layout": ia.get("layout"),

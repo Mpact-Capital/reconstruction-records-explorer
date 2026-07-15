@@ -99,6 +99,15 @@ export default async function RecordPage({
               {record.caption}
             </div>
           )}
+          {record.total_pages && record.total_pages > 1 && (
+            <Link
+              href={{ pathname: "/pages", query: { id: record.id, page: "1" } }}
+              className="text-sm px-3 py-1.5 rounded text-center text-white"
+              style={{ background: "var(--series-5)" }}
+            >
+              Browse all {record.total_pages} pages →
+            </Link>
+          )}
           {record.analysis_confidence !== null && (
             <div className="text-xs" style={{ color: "var(--text-muted)" }}>
               Analysis confidence: {Math.round(record.analysis_confidence * 100)}%
