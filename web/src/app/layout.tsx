@@ -48,6 +48,7 @@ export default function RootLayout({
             <nav className="masthead-caps flex gap-6 text-xs ml-auto" style={{ color: "var(--text-secondary)" }}>
               <Link href="/">Search</Link>
               <Link href="/analysis">Analysis</Link>
+              <Link href="/further-reading">Further Reading</Link>
             </nav>
           </div>
         </header>
