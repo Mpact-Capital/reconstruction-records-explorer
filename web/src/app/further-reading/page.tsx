@@ -122,6 +122,11 @@ const OTHER_WORKS: Work[] = [
   { title: "Battles for Freedom", subtitle: "The Use and Abuse of American History", year: 2017, publisher: "I. B. Tauris" },
 ];
 
+function worldcatUrl(w: Work): string {
+  const q = [w.title, w.subtitle, "Eric Foner"].filter(Boolean).join(" ");
+  return `https://search.worldcat.org/search?q=${encodeURIComponent(q)}`;
+}
+
 function WorkEntry({ w }: { w: Work }) {
   return (
     <div className="paper-card p-3 rounded flex flex-col gap-1">
@@ -142,6 +147,15 @@ function WorkEntry({ w }: { w: Work }) {
           {w.honors}
         </div>
       )}
+      <a
+        href={worldcatUrl(w)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-xs underline mt-1"
+        style={{ color: "var(--series-1)" }}
+      >
+        Find this book (WorldCat) &rarr;
+      </a>
     </div>
   );
 }
