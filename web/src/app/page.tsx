@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getFacetOptions, search } from "@/lib/api";
+import BookmarkButton from "@/components/BookmarkButton";
 
 export default async function SearchPage({
   searchParams,
@@ -182,40 +183,41 @@ export default async function SearchPage({
             {data.results.length} result{data.results.length === 1 ? "" : "s"}
           </div>
           {data.results.map((r) => (
-            <Link
-              key={r.id}
-              href={{ pathname: "/record", query: { id: r.id } }}
-              className="paper-card flex gap-4 p-3 rounded hover:shadow-md transition-shadow"
-            >
-              {r.image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={r.image_url.split("#")[0]}
-                  alt=""
-                  className="w-20 h-24 object-cover rounded flex-shrink-0"
-                  style={{ background: "var(--gridline)" }}
-                />
-              ) : (
-                <div
-                  className="w-20 h-24 rounded flex-shrink-0"
-                  style={{ background: "var(--gridline)" }}
-                />
-              )}
-              <div className="flex flex-col gap-1 min-w-0">
-                <div className="font-medium text-sm line-clamp-2">{r.title}</div>
-                <div className="text-xs flex gap-2" style={{ color: "var(--text-muted)" }}>
-                  {r.date && <span>{r.date}</span>}
-                  {r.doc_type && <span>· {r.doc_type}</span>}
-                </div>
-                {r.snippet && (
+            <div key={r.id} className="paper-card flex gap-4 p-3 rounded hover:shadow-md transition-shadow">
+              <Link href={{ pathname: "/record", query: { id: r.id } }} className="flex gap-4 min-w-0 flex-1">
+                {r.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={r.image_url.split("#")[0]}
+                    alt=""
+                    className="w-20 h-24 object-cover rounded flex-shrink-0"
+                    style={{ background: "var(--gridline)" }}
+                  />
+                ) : (
                   <div
-                    className="text-xs line-clamp-2"
-                    style={{ color: "var(--text-secondary)" }}
-                    dangerouslySetInnerHTML={{ __html: r.snippet }}
+                    className="w-20 h-24 rounded flex-shrink-0"
+                    style={{ background: "var(--gridline)" }}
                   />
                 )}
+                <div className="flex flex-col gap-1 min-w-0">
+                  <div className="font-medium text-sm line-clamp-2">{r.title}</div>
+                  <div className="text-xs flex gap-2" style={{ color: "var(--text-muted)" }}>
+                    {r.date && <span>{r.date}</span>}
+                    {r.doc_type && <span>· {r.doc_type}</span>}
+                  </div>
+                  {r.snippet && (
+                    <div
+                      className="text-xs line-clamp-2"
+                      style={{ color: "var(--text-secondary)" }}
+                      dangerouslySetInnerHTML={{ __html: r.snippet }}
+                    />
+                  )}
+                </div>
+              </Link>
+              <div className="flex-shrink-0 self-start">
+                <BookmarkButton recordId={r.id} title={r.title} />
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

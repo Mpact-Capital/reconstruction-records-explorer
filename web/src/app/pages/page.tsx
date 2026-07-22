@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getRecord } from "@/lib/api";
+import PageTextSearch from "@/components/PageTextSearch";
 
 export default async function PageViewer({
   searchParams,
@@ -20,6 +21,10 @@ export default async function PageViewer({
 
   const totalPages = record.total_pages ?? 0;
   const pageUrls = record.page_urls ?? [];
+  const representativeIndex = record.image_url
+    ? pageUrls.findIndex((u) => u.split("#")[0] === record.image_url?.split("#")[0])
+    : -1;
+  const representativePage = representativeIndex >= 0 ? representativeIndex + 1 : null;
 
   if (!totalPages || pageUrls.length === 0) {
     return (
@@ -117,6 +122,17 @@ export default async function PageViewer({
         Scanned page images are served directly from the National Archives Catalog. Transcription/analysis on
         this record page only covers the one representative page identified during analysis, not every page shown here.
       </div>
+
+      <PageTextSearch
+        recordId={id}
+        title={record.title}
+        text={record.text}
+        caption={record.caption}
+        photoDescription={record.photo_description}
+        textSource={record.text_source}
+        currentPage={current}
+        representativePage={representativePage}
+      />
     </div>
   );
 }

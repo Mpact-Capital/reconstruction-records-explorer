@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getRecord } from "@/lib/api";
+import BookmarkButton from "@/components/BookmarkButton";
 
 function EntityBadge({ type, value }: { type: string; value: string }) {
   const color: Record<string, string> = {
@@ -50,7 +51,10 @@ export default async function RecordPage({
         ← Back to search
       </Link>
 
-      <h1 className="font-display text-2xl">{record.title}</h1>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <h1 className="font-display text-2xl">{record.title}</h1>
+        <BookmarkButton recordId={record.id} title={record.title} />
+      </div>
       <div className="text-sm flex flex-wrap gap-3" style={{ color: "var(--text-muted)" }}>
         {record.date && <span>{record.date}</span>}
         {record.doc_type && <span>· {record.doc_type}</span>}
