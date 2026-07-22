@@ -59,10 +59,8 @@ export default async function PageViewer({
         <Link
           href={current > 1 ? pageLink(current - 1) : pageLink(1)}
           aria-disabled={current <= 1}
-          className="px-3 py-1.5 text-sm rounded"
+          className="btn-primary"
           style={{
-            background: "var(--series-1)",
-            color: "white",
             opacity: current <= 1 ? 0.4 : 1,
             pointerEvents: current <= 1 ? "none" : "auto",
           }}
@@ -81,13 +79,13 @@ export default async function PageViewer({
             min={1}
             max={totalPages}
             defaultValue={current}
-            className="w-20 rounded px-2 py-1 text-sm border text-center"
+            className="w-20 rounded-full px-3 py-1.5 text-sm border text-center"
             style={{ borderColor: "var(--border)", background: "var(--surface-raised)" }}
           />
           <span className="text-sm" style={{ color: "var(--text-muted)" }}>
             of {totalPages}
           </span>
-          <button type="submit" className="px-2 py-1 text-xs rounded border" style={{ borderColor: "var(--border)" }}>
+          <button type="submit" className="btn-outline">
             Go
           </button>
         </form>
@@ -95,10 +93,8 @@ export default async function PageViewer({
         <Link
           href={current < totalPages ? pageLink(current + 1) : pageLink(totalPages)}
           aria-disabled={current >= totalPages}
-          className="px-3 py-1.5 text-sm rounded"
+          className="btn-primary"
           style={{
-            background: "var(--series-1)",
-            color: "white",
             opacity: current >= totalPages ? 0.4 : 1,
             pointerEvents: current >= totalPages ? "none" : "auto",
           }}
@@ -107,10 +103,10 @@ export default async function PageViewer({
         </Link>
       </div>
 
-      <div className="paper-card p-2 rounded flex justify-center">
+      <div className="paper-card p-2 flex justify-center">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl} alt={`Page ${current} of ${totalPages}`} className="max-w-full rounded-sm" />
+          <img src={imageUrl} alt={`Page ${current} of ${totalPages}`} className="max-w-full rounded-md" />
         ) : (
           <div className="text-sm py-12" style={{ color: "var(--text-muted)" }}>
             Image unavailable for this page.

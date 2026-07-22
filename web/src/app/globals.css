@@ -145,8 +145,20 @@ a {
 .paper-card {
   background: var(--surface);
   border: 1px solid var(--border);
+  border-radius: 12px;
   box-shadow:
     0 1px 2px rgba(34, 27, 18, 0.06),
+    0 0 0 1px rgba(34, 27, 18, 0.02) inset;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+a.paper-card:hover,
+button.paper-card:hover,
+.paper-card.hoverable:hover {
+  transform: translateY(-2px);
+  border-color: rgba(179, 129, 26, 0.35);
+  box-shadow:
+    0 10px 24px rgba(34, 27, 18, 0.1),
     0 0 0 1px rgba(34, 27, 18, 0.02) inset;
 }
 
@@ -156,4 +168,132 @@ a {
       0 1px 3px rgba(0, 0, 0, 0.4),
       0 0 0 1px rgba(0, 0, 0, 0.15) inset;
   }
+
+  a.paper-card:hover,
+  button.paper-card:hover {
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(0, 0, 0, 0.15) inset;
+  }
+}
+
+/* A small, unmistakable acknowledgement that this is an MPact Capital
+   production -- used in the header tagline, footer, and homepage hero. */
+.badge-mpact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.3em 0.85em;
+  border-radius: 999px;
+  font-family: var(--font-display-serif), Georgia, serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--series-3);
+  border: 1px solid rgba(179, 129, 26, 0.45);
+  background: rgba(179, 129, 26, 0.09);
+  white-space: nowrap;
+}
+
+/* Rounded, liftable call-to-action -- replaces flat rectangular buttons. */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45em;
+  padding: 0.65rem 1.5rem;
+  border-radius: 999px;
+  background: var(--series-1);
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 1px 2px rgba(34, 27, 18, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: 0 6px 16px rgba(34, 27, 18, 0.22);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  padding: 0.55rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  background: var(--surface-raised);
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.btn-outline:hover {
+  border-color: var(--series-3);
+  color: var(--foreground);
+  transform: translateY(-1px);
+}
+
+/* Pill-style primary nav -- softer and more inviting than bare text links. */
+.nav-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.nav-pills a {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-pills a:hover {
+  background: var(--surface-raised);
+  color: var(--foreground);
+}
+
+/* Warm radial glow behind hero content -- an exhibit-hall feel rather than
+   a bare form at the top of the page. */
+.hero-band {
+  position: relative;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(179, 129, 26, 0.12), transparent 65%),
+    var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(34, 27, 18, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .hero-band {
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 0%, rgba(179, 129, 26, 0.16), transparent 65%),
+      var(--surface);
+  }
+}
+
+/* A short gradient flourish under section labels -- reads as a curated
+   exhibit placard rather than a spreadsheet header. */
+.section-heading {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.35rem;
+}
+
+.section-heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--series-3), transparent);
+  opacity: 0.55;
+}
+
+a {
+  transition: opacity 0.15s ease;
 }

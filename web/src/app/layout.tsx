@@ -41,11 +41,14 @@ export default function RootLayout({
           style={{ background: "var(--surface)", borderBottomColor: "var(--border)" }}
         >
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-            <WaxSeal size={40} />
-            <Link href="/" className="font-display text-lg leading-none" style={{ color: "var(--foreground)" }}>
-              Reconstruction Records Explorer
-            </Link>
-            <nav className="masthead-caps flex gap-6 text-xs ml-auto" style={{ color: "var(--text-secondary)" }}>
+            <WaxSeal size={68} />
+            <div className="flex flex-col gap-1 min-w-0">
+              <Link href="/" className="font-display text-xl leading-none truncate" style={{ color: "var(--foreground)" }}>
+                Reconstruction Records Explorer
+              </Link>
+              <span className="badge-mpact w-fit">An MPact Capital Special Project</span>
+            </div>
+            <nav className="nav-pills masthead-caps text-xs ml-auto" style={{ color: "var(--text-secondary)" }}>
               <Link href="/">Search</Link>
               <Link href="/analysis">Analysis</Link>
               <Link href="/buckets">Research Buckets</Link>
@@ -55,10 +58,24 @@ export default function RootLayout({
         </header>
         <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8">{children}</main>
         <footer
-          className="flex flex-col items-center gap-2 text-xs px-4 py-6 text-center border-t"
+          className="flex flex-col items-center gap-3 text-xs px-4 py-10 text-center border-t"
           style={{ color: "var(--text-muted)", borderColor: "var(--border)" }}
         >
-          <WaxSeal size={44} />
+          <WaxSeal size={84} />
+          <div className="flex flex-col items-center gap-1.5">
+            <span className="font-display text-base" style={{ color: "var(--foreground)" }}>
+              An MPact Capital Special Project
+            </span>
+            <a
+              href="https://mpactcap.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs"
+              style={{ color: "var(--series-1)" }}
+            >
+              mpactcap.com
+            </a>
+          </div>
           <span className="max-w-xl">
             Transcriptions and image analysis are machine-generated and may be inaccurate.
             Always verify against the linked source image.

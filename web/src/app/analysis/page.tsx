@@ -83,7 +83,7 @@ export default async function AnalysisPage() {
       </div>
 
       <section className="flex flex-col gap-3">
-        <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+        <h2 className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
           Documents by type
         </h2>
         <div className="flex flex-col gap-2">
@@ -101,7 +101,7 @@ export default async function AnalysisPage() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+        <h2 className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
           Volume by decade
         </h2>
         <div className="flex flex-col gap-2">
@@ -113,7 +113,7 @@ export default async function AnalysisPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <section className="flex flex-col gap-3">
-          <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+          <h2 className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
             Most-mentioned people
           </h2>
           <div className="flex flex-col gap-2">
@@ -131,7 +131,7 @@ export default async function AnalysisPage() {
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+          <h2 className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
             Most-mentioned places
           </h2>
           <div className="flex flex-col gap-2">
@@ -143,7 +143,7 @@ export default async function AnalysisPage() {
       </div>
 
       <section className="flex flex-col gap-3">
-        <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+        <h2 className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
           Largest dollar figures found (not necessarily personal transactions — see note above)
         </h2>
         <div className="overflow-x-auto">

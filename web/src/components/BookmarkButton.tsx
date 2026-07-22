@@ -55,17 +55,12 @@ export default function BookmarkButton({
 
   return (
     <div className="relative inline-block">
-      <button
-        type="button"
-        onClick={toggleOpen}
-        className="text-xs px-2 py-1 rounded border"
-        style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
-      >
+      <button type="button" onClick={toggleOpen} className="btn-outline">
         {label}
       </button>
       {open && (
         <div
-          className="absolute z-20 mt-1 p-3 rounded border flex flex-col gap-2 text-xs"
+          className="absolute z-20 mt-2 p-3 rounded-xl border flex flex-col gap-2 text-xs shadow-lg"
           style={{ background: "var(--surface-raised)", borderColor: "var(--border)", width: "240px" }}
         >
           {saved ? (
@@ -77,7 +72,7 @@ export default function BookmarkButton({
               </div>
               {buckets.length > 0 && (
                 <select
-                  className="border rounded px-1.5 py-1"
+                  className="border rounded-lg px-2 py-1.5"
                   style={{ borderColor: "var(--border)", background: "var(--surface)" }}
                   value={selectedBucket}
                   onChange={(e) => setSelectedBucket(e.target.value)}
@@ -100,24 +95,19 @@ export default function BookmarkButton({
                   if (e.target.value) setSelectedBucket("");
                 }}
                 placeholder="e.g. Covington VA leads"
-                className="border rounded px-1.5 py-1"
+                className="border rounded-lg px-2 py-1.5"
                 style={{ borderColor: "var(--border)", background: "var(--surface)" }}
               />
               <div className="flex gap-2 justify-end pt-1">
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="px-2 py-1 rounded"
+                  className="px-2 py-1 rounded-lg"
                   style={{ color: "var(--text-muted)" }}
                 >
                   Cancel
                 </button>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="px-2 py-1 rounded text-white"
-                  style={{ background: "var(--series-1)" }}
-                >
+                <button type="button" onClick={handleSave} className="btn-primary" style={{ padding: "0.4rem 0.9rem" }}>
                   Save
                 </button>
               </div>

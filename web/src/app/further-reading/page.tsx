@@ -174,7 +174,7 @@ export default function FurtherReadingPage() {
       </p>
 
       <section className="flex flex-col gap-3">
-        <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+        <h2 className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
           Most directly relevant to this archive
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -185,7 +185,7 @@ export default function FurtherReadingPage() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+        <h2 className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
           Published through Columbia University
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -206,7 +206,7 @@ export default function FurtherReadingPage() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+        <h2 className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
           Other works
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

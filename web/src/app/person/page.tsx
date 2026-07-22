@@ -66,7 +66,7 @@ export default async function PersonPage({
 
       {profile.financial_mentions.length > 0 && (
         <div>
-          <div className="masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
+          <div className="section-heading masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
             Financial timeline
           </div>
           <div className="overflow-x-auto">
@@ -101,7 +101,7 @@ export default async function PersonPage({
       )}
 
       <div>
-        <div className="masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
+        <div className="section-heading masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
           Records mentioning {profile.name}
         </div>
         <div className="flex flex-col gap-2">

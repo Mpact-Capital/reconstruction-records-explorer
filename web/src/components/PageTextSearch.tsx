@@ -69,10 +69,10 @@ export default function PageTextSearch({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search this document's transcribed text…"
-            className="text-sm border rounded px-2 py-1 w-64"
+            className="text-sm border rounded-full px-3.5 py-1.5 w-64"
             style={{ borderColor: "var(--border)", background: "var(--surface-raised)" }}
           />
-          <button type="submit" className="text-xs px-2 py-1.5 rounded border" style={{ borderColor: "var(--border)" }}>
+          <button type="submit" className="btn-outline">
             Search
           </button>
         </form>
@@ -110,7 +110,7 @@ export default function PageTextSearch({
 
       {onRepresentativePage && combined && (
         <div>
-          <div className="masthead-caps text-xs mb-1" style={{ color: "var(--text-muted)" }}>
+          <div className="section-heading masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
             Transcribed text {textSource ? `(${textSource})` : ""} — this page
           </div>
           <div className="paper-card text-sm whitespace-pre-wrap p-3 rounded leading-relaxed">

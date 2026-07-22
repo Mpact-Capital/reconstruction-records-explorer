@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getFacetOptions, search } from "@/lib/api";
 import BookmarkButton from "@/components/BookmarkButton";
+import WaxSeal from "@/components/WaxSeal";
 
 export default async function SearchPage({
   searchParams,
@@ -35,7 +36,20 @@ export default async function SearchPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <form className="paper-card flex flex-col gap-3 p-4 rounded" action="/" method="GET">
+      <div className="hero-band flex flex-col items-center text-center gap-3 px-6 py-10">
+        <WaxSeal size={128} />
+        <h1 className="font-display text-3xl md:text-4xl" style={{ color: "var(--foreground)" }}>
+          Reconstruction Records Explorer
+        </h1>
+        <p className="max-w-2xl text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+          A searchable archive of digitized Freedmen&rsquo;s Bureau, Freedman&rsquo;s Bank, and other
+          Reconstruction-era (1863&ndash;1877) federal records. Every scanned page stays linked to its
+          transcription, so the history here is always checkable against the original source.
+        </p>
+        <span className="badge-mpact">An MPact Capital Special Project</span>
+      </div>
+
+      <form className="paper-card flex flex-col gap-3 p-4" action="/" method="GET">
         <input
           type="text"
           name="q"
@@ -136,11 +150,7 @@ export default async function SearchPage({
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            className="px-4 py-2 text-sm rounded text-white"
-            style={{ background: "var(--series-1)" }}
-          >
+          <button type="submit" className="btn-primary">
             Search
           </button>
           {(q || doc_type || person || place || collection || decade) && (
@@ -183,7 +193,7 @@ export default async function SearchPage({
             {data.results.length} result{data.results.length === 1 ? "" : "s"}
           </div>
           {data.results.map((r) => (
-            <div key={r.id} className="paper-card flex gap-4 p-3 rounded hover:shadow-md transition-shadow">
+            <div key={r.id} className="paper-card hoverable flex gap-4 p-3">
               <Link href={{ pathname: "/record", query: { id: r.id } }} className="flex gap-4 min-w-0 flex-1">
                 {r.image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element

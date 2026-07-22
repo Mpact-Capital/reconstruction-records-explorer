@@ -63,7 +63,7 @@ export default function BucketsPage() {
 
       <div className="flex gap-6 flex-wrap">
         <div className="flex flex-col gap-2 min-w-[220px]">
-          <div className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+          <div className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
             Buckets
           </div>
           {buckets.length === 0 && (
@@ -127,22 +127,17 @@ export default function BucketsPage() {
               onChange={(e) => setNewBucketName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
               placeholder="New bucket name"
-              className="text-sm border rounded px-2 py-1 flex-1"
+              className="text-sm border rounded-full px-3.5 py-1.5 flex-1"
               style={{ borderColor: "var(--border)", background: "var(--surface-raised)" }}
             />
-            <button
-              type="button"
-              onClick={handleCreate}
-              className="text-xs px-2 py-1 rounded text-white"
-              style={{ background: "var(--series-1)" }}
-            >
+            <button type="button" onClick={handleCreate} className="btn-primary">
               + New
             </button>
           </div>
         </div>
 
         <div className="flex-1 min-w-[280px] flex flex-col gap-3">
-          <div className="masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
+          <div className="section-heading masthead-caps text-xs" style={{ color: "var(--text-muted)" }}>
             {effectiveActiveId ? `Saved in "${buckets.find((b) => b.id === effectiveActiveId)?.name}"` : "Select a bucket"}
           </div>
           {effectiveActiveId && bookmarks.length === 0 && (

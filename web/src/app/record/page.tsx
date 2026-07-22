@@ -85,12 +85,12 @@ export default async function RecordPage({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
           {record.image_url ? (
-            <div className="paper-card p-2 rounded">
+            <div className="paper-card p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={record.image_url.split("#")[0]}
                 alt={record.caption ?? record.title ?? ""}
-                className="w-full rounded-sm"
+                className="w-full rounded-md"
               />
             </div>
           ) : (
@@ -106,7 +106,7 @@ export default async function RecordPage({
           {record.total_pages && record.total_pages > 1 && (
             <Link
               href={{ pathname: "/pages", query: { id: record.id, page: "1" } }}
-              className="text-sm px-3 py-1.5 rounded text-center text-white"
+              className="btn-primary"
               style={{ background: "var(--series-5)" }}
             >
               Browse all {record.total_pages} pages →
@@ -121,7 +121,7 @@ export default async function RecordPage({
 
         <div className="flex flex-col gap-4">
           <div>
-            <div className="masthead-caps text-xs mb-1" style={{ color: "var(--text-muted)" }}>
+            <div className="section-heading masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
               Text {record.text_source ? `(${record.text_source})` : ""}
             </div>
             <div className="paper-card text-sm whitespace-pre-wrap p-3 rounded leading-relaxed">
@@ -131,7 +131,7 @@ export default async function RecordPage({
 
           {record.tables.length > 0 && (
             <div>
-              <div className="masthead-caps text-xs mb-1" style={{ color: "var(--text-muted)" }}>
+              <div className="section-heading masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
                 Extracted tables
               </div>
               {record.tables.map((t, i) => (
@@ -157,7 +157,7 @@ export default async function RecordPage({
 
           {Object.keys(entitiesByType).length > 0 && (
             <div>
-              <div className="masthead-caps text-xs mb-1" style={{ color: "var(--text-muted)" }}>
+              <div className="section-heading masthead-caps text-xs mb-2" style={{ color: "var(--text-muted)" }}>
                 Entities
               </div>
               {Object.entries(entitiesByType).map(([type, ents]) => (
